@@ -77,16 +77,23 @@ describe Wisper::Publisher do
     end
 
     describe ':scope argument' do
-      it 'scopes listener to given class' do
-        listener_1 = double('InScopeListener')
+      let(:listener_1) {double('Listener')  }
+      let(:listener_2) {double('Listener')  }
+
+      before do
         listener_1.should_receive(:it_happended)
-
-        listener_2 = double('OutOfScopeListener')
         listener_2.should_not_receive(:it_happended)
+      end
 
+      it 'scopes listener to given class' do
         publisher.add_listener(listener_1, :scope => publisher.class)
         publisher.add_listener(listener_2, :scope => Class.new)
+        publisher.send(:broadcast, 'it_happended')
+      end
 
+      it 'scopes listener to given class string' do
+        publisher.add_listener(listener_1, :scope => publisher.class.to_s)
+        publisher.add_listener(listener_2, :scope => Class.new.to_s)
         publisher.send(:broadcast, 'it_happended')
       end
     end

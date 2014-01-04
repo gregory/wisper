@@ -6,7 +6,7 @@ module Wisper
       super(listener, options)
       @with   = options[:with]
       @prefix = stringify_prefix(options[:prefix])
-      @scopes = Array(options[:scope]).to_set
+      @scopes = Array(options[:scope]).map(&:to_s).to_set
       fail_on_async if options.has_key?(:async)
     end
 
@@ -20,7 +20,7 @@ module Wisper
     private
 
     def in_scope?(publisher)
-      scopes.empty? || scopes.include?(publisher.class)
+      scopes.empty? || scopes.include?(publisher.class.to_s)
     end
 
     def map_event_to_method(event)
